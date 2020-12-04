@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -40,5 +41,26 @@ namespace OPERACION_YMF.Controllers
 
             return selectList;
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Aceptar([Bind(Include = "NRO_CUENTA_ORIGEN,SALDO_ORIGEN, NRO_CUENTA_DESTINO, SALDO_DESTINO")] TransferenciaModel transferenciaModel)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var origen = db.CUENTAs.Find(transferenciaModel.NRO_CUENTA_DESTINO);
+                origen.SALDO = origen.SALDO - transferenciaModel.SALDO_DESTINO;
+                db.Entry(origen).State = EntityState.Modified;
+
+                var destino = db.CUENTAs.Find(transferenciaModel.NRO_CUENTA_ORIGEN);
+                destino.SALDO = destino.SALDO + transferenciaModel.SALDO_ORIGEN;
+                db.Entry(destino).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
     }
 }

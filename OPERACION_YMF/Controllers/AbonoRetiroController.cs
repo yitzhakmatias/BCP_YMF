@@ -39,6 +39,25 @@ namespace OPERACION_YMF.Controllers
 
             return selectList;
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index([Bind(Include = "NRO_CUENTA,SALDO")] AbonoRetiroModel cuenta, string Deposito, string Retiro)
+        {
+            if (ModelState.IsValid)
+            {
+                var movimiento = new MOVIMIENTO();
+                movimiento.TIPO = "A";
+                movimiento.NRO_CUENTA = cuenta.NRO_CUENTA;
+                movimiento.IMPORTE = cuenta.SALDO;
+                movimiento.FECHA = DateTime.Now;
+
+                db.MOVIMIENTOes.Add(movimiento);
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
