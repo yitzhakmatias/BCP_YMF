@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="BD_TRANSACCIONES_YMFModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CUENTA">
+          <Key>
+            <PropertyRef Name="NRO_CUENTA" />
+          </Key>
+          <Property Name="NRO_CUENTA" Type="nvarchar" MaxLength="14" Nullable="false" />
+          <Property Name="TIPO" Type="char" MaxLength="3" />
+          <Property Name="MONEDA" Type="char" MaxLength="3" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="40" />
+          <Property Name="SALDO" Type="decimal" Precision="12" Scale="2" />
+        </EntityType>
+        <EntityType Name="MOVIMIENTO">
+          <Key>
+            <PropertyRef Name="FECHA" />
+          </Key>
+          <Property Name="NRO_CUENTA" Type="nvarchar" MaxLength="14" Nullable="false" />
+          <Property Name="FECHA" Type="datetime" Nullable="false" />
+          <Property Name="TIPO" Type="char" MaxLength="1" />
+          <Property Name="IMPORTE" Type="decimal" Precision="12" Scale="2" />
+        </EntityType>
+        <Association Name="FK_MOVIMIENTO_CUENTA">
+          <End Role="CUENTA" Type="Self.CUENTA" Multiplicity="1" />
+          <End Role="MOVIMIENTO" Type="Self.MOVIMIENTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CUENTA">
+              <PropertyRef Name="NRO_CUENTA" />
+            </Principal>
+            <Dependent Role="MOVIMIENTO">
+              <PropertyRef Name="NRO_CUENTA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BD_TRANSACCIONES_YMFModelStoreContainer">
+          <EntitySet Name="CUENTA" EntityType="Self.CUENTA" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MOVIMIENTO" EntityType="Self.MOVIMIENTO" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_MOVIMIENTO_CUENTA" Association="Self.FK_MOVIMIENTO_CUENTA">
+            <End Role="CUENTA" EntitySet="CUENTA" />
+            <End Role="MOVIMIENTO" EntitySet="MOVIMIENTO" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BD_TRANSACCIONES_YMFModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CUENTA">
+          <Key>
+            <PropertyRef Name="NRO_CUENTA" />
+          </Key>
+          <Property Name="NRO_CUENTA" Type="String" MaxLength="14" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TIPO" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="MONEDA" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
+          <Property Name="NOMBRE" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="SALDO" Type="Decimal" Precision="12" Scale="2" />
+          <NavigationProperty Name="MOVIMIENTOes" Relationship="Self.FK_MOVIMIENTO_CUENTA" FromRole="CUENTA" ToRole="MOVIMIENTO" />
+        </EntityType>
+        <EntityType Name="MOVIMIENTO">
+          <Key>
+            <PropertyRef Name="FECHA" />
+          </Key>
+          <Property Name="NRO_CUENTA" Type="String" MaxLength="14" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FECHA" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TIPO" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="IMPORTE" Type="Decimal" Precision="12" Scale="2" />
+          <NavigationProperty Name="CUENTA" Relationship="Self.FK_MOVIMIENTO_CUENTA" FromRole="MOVIMIENTO" ToRole="CUENTA" />
+        </EntityType>
+        <Association Name="FK_MOVIMIENTO_CUENTA">
+          <End Role="CUENTA" Type="Self.CUENTA" Multiplicity="1" />
+          <End Role="MOVIMIENTO" Type="Self.MOVIMIENTO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CUENTA">
+              <PropertyRef Name="NRO_CUENTA" />
+            </Principal>
+            <Dependent Role="MOVIMIENTO">
+              <PropertyRef Name="NRO_CUENTA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BD_TRANSACCIONES" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CUENTAs" EntityType="Self.CUENTA" />
+          <EntitySet Name="MOVIMIENTOes" EntityType="Self.MOVIMIENTO" />
+          <AssociationSet Name="FK_MOVIMIENTO_CUENTA" Association="Self.FK_MOVIMIENTO_CUENTA">
+            <End Role="CUENTA" EntitySet="CUENTAs" />
+            <End Role="MOVIMIENTO" EntitySet="MOVIMIENTOes" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BD_TRANSACCIONES_YMFModelStoreContainer" CdmEntityContainer="BD_TRANSACCIONES">
+          <EntitySetMapping Name="CUENTAs">
+            <EntityTypeMapping TypeName="BD_TRANSACCIONES_YMFModel.CUENTA">
+              <MappingFragment StoreEntitySet="CUENTA">
+                <ScalarProperty Name="NRO_CUENTA" ColumnName="NRO_CUENTA" />
+                <ScalarProperty Name="TIPO" ColumnName="TIPO" />
+                <ScalarProperty Name="MONEDA" ColumnName="MONEDA" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="SALDO" ColumnName="SALDO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MOVIMIENTOes">
+            <EntityTypeMapping TypeName="BD_TRANSACCIONES_YMFModel.MOVIMIENTO">
+              <MappingFragment StoreEntitySet="MOVIMIENTO">
+                <ScalarProperty Name="NRO_CUENTA" ColumnName="NRO_CUENTA" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="TIPO" ColumnName="TIPO" />
+                <ScalarProperty Name="IMPORTE" ColumnName="IMPORTE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
