@@ -43,18 +43,44 @@ namespace OPERACION_YMF.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Aceptar([Bind(Include = "NRO_CUENTA_ORIGEN,SALDO_ORIGEN, NRO_CUENTA_DESTINO, SALDO_DESTINO")] TransferenciaModel transferenciaModel)
+        public ActionResult Index([Bind(Include = "NRO_CUENTA_ORIGEN,SALDO_ORIGEN, NRO_CUENTA_DESTINO, SALDO_DESTINO")] TransferenciaModel transferenciaModel, string aceptar, string cancelar)
+        {
+            
+            if (ModelState.IsValid)
+            {
+                if (aceptar != null)
+                {
+                    CUENTA origen = db.CUENTAs.Find(transferenciaModel.NRO_CUENTA_DESTINO);
+                    origen.SALDO = origen.SALDO!=null?  origen.SALDO.Value - transferenciaModel.SALDO_DESTINO: -transferenciaModel.SALDO_DESTINO;
+                    db.Entry(origen).State = EntityState.Modified;
+
+                    var destino = db.CUENTAs.Find(transferenciaModel.NRO_CUENTA_ORIGEN);
+                    if (destino != null)
+                    {
+                        destino.SALDO = destino.SALDO.Value + transferenciaModel.SALDO_ORIGEN;
+                        db.Entry(destino).State = EntityState.Modified;
+                    }
+
+                    db.SaveChanges(); 
+                }
+                
+            }
+
+            return RedirectToAction("Index");
+
+        }
+        [HttpPost]
+        public ActionResult Aceptar([Bind(Include = "NRO_CUENTA_ORIGEN,SALDO_ORIGEN, NRO_CUENTA_DESTINO, SALDO_DESTINO")] TransferenciaModel transferenciaModel, string submit)
         {
             if (ModelState.IsValid)
             {
 
-                var origen = db.CUENTAs.Find(transferenciaModel.NRO_CUENTA_DESTINO);
-                origen.SALDO = origen.SALDO - transferenciaModel.SALDO_DESTINO;
+                CUENTA origen = db.CUENTAs.Find(transferenciaModel.NRO_CUENTA_DESTINO);
+                if (origen.SALDO != null) origen.SALDO = origen.SALDO.Value - transferenciaModel.SALDO_DESTINO;
                 db.Entry(origen).State = EntityState.Modified;
 
                 var destino = db.CUENTAs.Find(transferenciaModel.NRO_CUENTA_ORIGEN);
-                destino.SALDO = destino.SALDO + transferenciaModel.SALDO_ORIGEN;
+                destino.SALDO = destino.SALDO.Value + transferenciaModel.SALDO_ORIGEN;
                 db.Entry(destino).State = EntityState.Modified;
                 db.SaveChanges();
             }
